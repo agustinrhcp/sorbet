@@ -399,7 +399,7 @@ tuple<LocalRef, BasicBlock *, BasicBlock *> CFGBuilder::walkDefault(CFGContext c
     if (paramInfo.type != nullptr) {
         auto tmp = cctx.newTemporary(core::Names::castTemp());
         synthesizeExpr(defaultNext, tmp, defLoc, make_insn<Cast>(result, defLoc, paramInfo.type, core::Names::let()));
-        cctx.inWhat.minLoops[tmp.id()] = CFG::MIN_LOOP_LET;
+        cctx.inWhat.minLoops[tmp.id()].pin = MinLoops::Pin::Let;
     }
 
     return {result, presentNext, defaultNext};
@@ -1108,7 +1108,7 @@ BasicBlock *CFGBuilder::walk(CFGContext cctx, const ast::ExpressionPtr &what, Ba
                     current->exprs.emplace_back(cctx.target, c.loc, make_insn<Cast>(tmp, argLoc, c.type, c.cast));
                 }
                 if (c.cast == core::Names::let()) {
-                    cctx.inWhat.minLoops[cctx.target.id()] = CFG::MIN_LOOP_LET;
+                    cctx.inWhat.minLoops[cctx.target.id()].pin = MinLoops::Pin::Let;
                 }
 
                 ret = current;
